@@ -5,12 +5,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -18,10 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.chape.showg.MyApplication;
+import com.chape.showg.activity.ImageBrowseActivity;
+import com.chape.showg.util.MyApplication;
 import com.chape.showg.R;
-import com.chape.showg.WebviewActivity;
-import com.chape.showg.adapter.EndLessOnScrollListener;
+import com.chape.showg.activity.WebviewActivity;
+import com.chape.showg.listener.EndLessOnScrollListener;
 import com.chape.showg.adapter.PictureAdapter;
 import com.chape.showg.base.Picture;
 import com.chape.showg.util.HttpUtil;
@@ -30,10 +28,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Callback;
-
-import static android.R.string.ok;
 
 /**
  * Created by Administrator on 2017/8/19.
@@ -89,8 +83,8 @@ public class PictureFragment extends Fragment {
         adapter.setOnItemClickListener(new PictureAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(MyApplication.getContext(),picList.get(position).getContent_url(),Toast.LENGTH_LONG).show();
-                Intent intent=new Intent(MyApplication.getContext(),WebviewActivity.class);
+               // Toast.makeText(MyApplication.getContext(),picList.get(position).getContent_url(),Toast.LENGTH_LONG).show();
+                Intent intent=new Intent(MyApplication.getContext(),ImageBrowseActivity.class);
                 intent.putExtra("picurl",picList.get(position).getContent_url());
                 startActivity(intent);
             }

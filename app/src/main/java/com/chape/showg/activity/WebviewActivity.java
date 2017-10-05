@@ -1,10 +1,12 @@
-package com.chape.showg;
+package com.chape.showg.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.chape.showg.R;
 
 public class WebviewActivity extends AppCompatActivity {
 

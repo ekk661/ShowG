@@ -1,5 +1,6 @@
-package com.chape.showg;
+package com.chape.showg.util;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
@@ -10,6 +11,7 @@ import android.content.Context;
 public class MyApplication extends Application {
     private static Context context;
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onCreate() {
         context=getApplicationContext();

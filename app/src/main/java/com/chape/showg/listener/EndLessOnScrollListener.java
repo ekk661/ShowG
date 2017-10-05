@@ -1,4 +1,4 @@
-package com.chape.showg.adapter;
+package com.chape.showg.listener;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;

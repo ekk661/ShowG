@@ -1,4 +1,4 @@
-package com.chape.showg;
+package com.chape.showg.activity;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,6 +11,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.chape.showg.Fragment.MgFragment;
 import com.chape.showg.Fragment.PictureFragment;
 import com.chape.showg.Fragment.VideoFragment;
+import com.chape.showg.R;
 import com.chape.showg.base.Picture;
 import com.chape.showg.util.HttpUtil;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.chape.showg;
+package com.chape.showg.util;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,31 +13,23 @@ import java.util.regex.Pattern;
  */
 
 public class ParseHtml {
-    private List<String> listImgSrc = new ArrayList<>();
+    private static List<String> listImgSrc = new ArrayList<>();
     // 获取img标签正则
-    private static final String IMAGE_URL_TAG = "<img.*src=(.*?)[^>]*?>";
+    //private static final String IMAGE_URL_TAG = "<img.*src=(.*?)[^>]*?>";
+    private static final String IMAGE_URL_TAG = "name=(.*?)[^>]*?>";
     // 获取src路径的正则
     private static final String IMAGE_URL_CONTENT = "http:\"?(.*?)(\"|>|\\s+)";
-
-  /*  private void statPhotoViewActivity(int position) {
-        Intent intent = new Intent(this, PhotoViewActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("dataBean", mData);
-        intent.putExtras(bundle);
-        intent.putExtra("currentPosition", position);
-        startActivity(intent);
-    }*/
-    private List<String> getAllImageUrlFromHtml(String html) {
+    public static List<String> getAllImageUrlFromHtml(String html) {
         Matcher matcher = Pattern.compile(IMAGE_URL_TAG).matcher(html);
         List<String> listImgUrl = new ArrayList<String>();
         while (matcher.find()) {
             listImgUrl.add(matcher.group());
         }
         //从图片对应的地址对象中解析出 src 标签对应的内容
-        getAllImageUrlFormSrcObject(listImgUrl);
+        listImgUrl=getAllImageUrlFormSrcObject(listImgUrl);
         return listImgUrl;
     }
-    private List<String> getAllImageUrlFormSrcObject(List<String> listImageUrl) {
+    public static List<String> getAllImageUrlFormSrcObject(List<String> listImageUrl) {
         for (String image : listImageUrl) {
             Matcher matcher = Pattern.compile(IMAGE_URL_CONTENT).matcher(image);
             while (matcher.find()) {
@@ -45,5 +37,9 @@ public class ParseHtml {
             }
         }
         return listImgSrc;
+    }
+    public static String getHtmlString(String html){
+        String str=html.substring(html.indexOf("<div id=\"tu\" class=\"tu\">")+1, html.lastIndexOf("</div> <div class=\"tub\">"));
+        return str;
     }
 }
