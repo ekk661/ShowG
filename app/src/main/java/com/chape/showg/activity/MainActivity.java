@@ -14,6 +14,8 @@ import com.chape.showg.Fragment.VideoFragment;
 import com.chape.showg.R;
 import com.chape.showg.base.Picture;
 import com.chape.showg.util.HttpUtil;
+import com.chape.showg.util.JsoupUtil;
+
 import java.io.IOException;
 import java.util.List;
 import okhttp3.Call;
@@ -37,12 +39,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
         setDefaultFragment();
 
-
+getdata();
 
 
     }
 
-
+private void getdata(){
+       Thread thread=new Thread(new Runnable() {
+           @Override
+           public void run() {
+               JsoupUtil.getDoc();
+           }
+       });
+       thread.start();
+}
 
 
 

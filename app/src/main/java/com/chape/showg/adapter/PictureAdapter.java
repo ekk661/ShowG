@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+
 import com.bumptech.glide.Glide;
 import com.chape.showg.R;
 import com.chape.showg.base.Picture;
@@ -57,9 +58,9 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         Picture picture=mPictureList.get(position);
 
-        //Glide.with(mContext).load(picture.getPic_url()).into(holder.imageView);
+       // Glide.with(mContext).load(picture.getPic_url()).into(holder.imageView);
         // Glide有BUG刷新不显示；
-        Picasso.with(mContext).load(picture.getPic_url()).into(holder.imageView);
+       Picasso.with(mContext).load(picture.getPic_url()).into(holder.imageView);
         //将position保存在itemView的Tag中，以便点击时进行获取
         holder.itemView.setTag(position);
     }
@@ -69,6 +70,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     public PictureAdapter(List<Picture> PictureList,Context context) {
     this.mContext=context;
       this.mPictureList=PictureList;
+      notifyDataSetChanged();
     }
 
     @Override
