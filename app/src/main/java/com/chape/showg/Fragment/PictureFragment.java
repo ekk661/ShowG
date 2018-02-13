@@ -59,7 +59,7 @@ public class PictureFragment extends Fragment {
     private View view;
    private SwipeRefreshLayout swipeRefreshLayout;
   private GridLayoutManager gridLayoutManager;
-  private int page=1;
+  private int page=2;
 
     @Nullable
 
@@ -87,7 +87,7 @@ public class PictureFragment extends Fragment {
 
 private void initData(){
     picList=new ArrayList<>();
-    getData("10");
+    getData("");
 
 }
 private void initAdapter(){
@@ -101,6 +101,22 @@ private void initAdapter(){
             intent.putExtra("picurl",picList.get(position).getContent_url());
             startActivity(intent);
 
+        }
+    });
+    adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+        @Override
+        public void onLoadMoreRequested() {
+            if(page>36){
+                adapter.loadMoreEnd();
+            }else if(page>1&&page<36){
+                getData(""+page);
+                page++;
+                adapter.notifyDataSetChanged();
+               // adapter.addData(picList);
+           adapter.loadMoreComplete();
+            }else {
+               adapter.loadMoreFail();
+            }
         }
     });
     recyclerView.setAdapter(adapter);
@@ -188,7 +204,8 @@ private void getData(final String page){
 
                            @Override
                            public void onComplete() {
-                               adapter.notifyDataSetChanged();
+                               adapter.loadMoreComplete();
+                           // adapter.notifyDataSetChanged();
                              //  adapter=new PictureAdapter(picList,getContext());
                               // recyclerView.setAdapter(adapter);
                              //  adapter.notifyDataSetChanged();
