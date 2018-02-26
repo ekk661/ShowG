@@ -44,10 +44,11 @@ import io.reactivex.schedulers.Schedulers;
 public class ImageBrowseActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     //private ImageBrowsePagerAdapter mAdapter;
-   // private List<String> mListUrl;
-  private String url;
+    // private List<String> mListUrl;
+    private String url;
     private Intent intent;
     List<String> strlist;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,50 +56,52 @@ public class ImageBrowseActivity extends AppCompatActivity {
         initView();
         initData();
     }
-    private void initView(){
-        mViewPager=(ViewPager)findViewById(R.id.viewpager);
+
+    private void initView() {
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
 
     }
-    private void initData(){
-        intent=getIntent();
-        url=intent.getStringExtra("picurl");
-       //new getData().execute(url);
+
+    private void initData() {
+        intent = getIntent();
+        url = intent.getStringExtra("picurl");
+        //new getData().execute(url);
         getData(url);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       // strlist.clear();
+        // strlist.clear();
     }
 
 
-    private void getData(final String  url){
+    private void getData(final String url) {
 
         Observable.create(new ObservableOnSubscribe<List<String>>() {
             @Override
             public void subscribe(ObservableEmitter<List<String>> emitter) throws Exception {
-                List<String> pictures=new ArrayList<>();
+                List<String> pictures = new ArrayList<>();
                 try {
                     Document doc = Jsoup.connect(url).get();
-                  //  Element element=doc.getElementById("tu");
-                 //   Elements titleLinks=element.getElementsByTag("a");
-                   Elements titleLinks = doc.select("div.tu>p>img");
-                  Log.e("cishu",""+titleLinks.size());
+                    //  Element element=doc.getElementById("tu");
+                    //   Elements titleLinks=element.getElementsByTag("a");
+                    Elements titleLinks = doc.select("div.tu>p>img");
+                    Log.e("cishu", "" + titleLinks.size());
                  /*  for (int j = 0; j < titleLinks.size(); j++) {
                         String picurl = titleLinks.get(j).select("img").attr("name");
                       //  String picurl = titleLinks.get(j).select("img").attr("name");
                         Log.e("title",picurl);
                       pictures.add(picurl);
                     }*/
-                   for(Element e:titleLinks){
-                    String picurl=e.select("img").attr("name");
-                    Log.e("tilte",picurl);
-                    pictures.add(picurl);
-                   }
+                    for (Element e : titleLinks) {
+                        String picurl = e.select("img").attr("name");
+                        Log.e("tilte", picurl);
+                        pictures.add(picurl);
+                    }
                     emitter.onNext(pictures);
                 } catch (IOException e) {
-                   emitter.onError(e);
+                    emitter.onError(e);
                 }
             }
 
@@ -109,6 +112,7 @@ public class ImageBrowseActivity extends AppCompatActivity {
                     public void accept(List<String> strings) throws Exception {
                         mViewPager.setAdapter(new ImageBrowsePagerAdapter(strings));
                     }
+
                 }/*new Observer<String>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -134,7 +138,8 @@ public class ImageBrowseActivity extends AppCompatActivity {
                     }
                 }*/);
     }
-    private class getData extends AsyncTask<String,Integer,String> {
+
+    private class getData extends AsyncTask<String, Integer, String> {
         @Override
         //
         protected void onPreExecute() {
@@ -147,37 +152,36 @@ public class ImageBrowseActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
 
 
-            return  HttpUtil.get(params[0]);
+            return HttpUtil.get(params[0]);
         }
 
         @Override
         //
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if(result!=null){
+            if (result != null) {
 
                 //  String str=result.substring(result.indexOf("<div id=\"tu\" class=\"tu\">")+1, result.lastIndexOf("</div> <div class=\"tub\">"));
-                String str= ParseHtml.getHtmlString(result);
-                strlist=new ArrayList<>();
-                strlist=ParseHtml.getAllImageUrlFromHtml(str);
-             //   mAdapter=new ImageBrowsePagerAdapter(ImageBrowseActivity.this,strlist);
+                String str = ParseHtml.getHtmlString(result);
+                strlist = new ArrayList<>();
+                strlist = ParseHtml.getAllImageUrlFromHtml(str);
+                //   mAdapter=new ImageBrowsePagerAdapter(ImageBrowseActivity.this,strlist);
                 mViewPager.setAdapter(new ImageBrowsePagerAdapter(strlist));
-            }else {
+            } else {
 
             }
-
 
 
         }
     }
 
     static class ImageBrowsePagerAdapter extends PagerAdapter {
-       // private Context context;
+        // private Context context;
         private List<String> urls;
 
         public ImageBrowsePagerAdapter(List<String> urls) {
-          //  this.context=context;
-            this.urls=urls;
+            //  this.context=context;
+            this.urls = urls;
         }
 
         @Override
@@ -187,7 +191,7 @@ public class ImageBrowseActivity extends AppCompatActivity {
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            return view==object;
+            return view == object;
         }
 
         @Override
@@ -197,19 +201,19 @@ public class ImageBrowseActivity extends AppCompatActivity {
 
         @Override
         public View instantiateItem(ViewGroup container, int position) {
-          //  View view = View.inflate(context, R.layout.item_image_browser, null);
-           // PhotoView photoView=(PhotoView) view.findViewById(R.id.pv_show_image);
-            PhotoView photoView=new PhotoView(container.getContext());
+            //  View view = View.inflate(context, R.layout.item_image_browser, null);
+            // PhotoView photoView=(PhotoView) view.findViewById(R.id.pv_show_image);
+            PhotoView photoView = new PhotoView(container.getContext());
             String picUrl = urls.get(position);
             Uri u = Uri.parse(picUrl);
-          //  photoView.setImageURI(u);
+            //  photoView.setImageURI(u);
             Picasso.with(container.getContext())
                     .load(u)
                     .into(photoView);
             container.addView(photoView);
-           // container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-           // container.addView(view);
-          //  return view;
+            // container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            // container.addView(view);
+            //  return view;
             return photoView;
         }
     }

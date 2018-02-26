@@ -34,7 +34,7 @@ public class VideoFragment extends Fragment {
     private LinearLayoutManager mLinearLayoutManager;
 
     private View view;
-    private Video video1=new Video("http://rbv01.ku6.com/FbWgxVgcAki2ntV94N5t3g.mp4");
+    private Video video1=new Video("http://k.syasn.com/b/b825.mp4?k1=120.32.22.23&k2=cs5e31d69e&k3=5b83ab7aa0eb23db6dbe40b88ee1bea6&k4=39238a57d952cc5d7258653a8b0c7e5c&k5=b825&k6=8830374127e883f94c116fb943b87e96&k7=123");
     private Video video2=new Video("http://rbv01.ku6.com/Jd0dyDVsf80mAf2swCYKCA.mp4");
     @Nullable
     @Override
@@ -44,6 +44,7 @@ public class VideoFragment extends Fragment {
         return view;
     }
    private void initRecyclerView(){
+
        mListVideo=new ArrayList<>();
        mLinearLayoutManager=new LinearLayoutManager(getContext());
        mRecyclerView=(RecyclerView)view.findViewById(R.id.video_rv);

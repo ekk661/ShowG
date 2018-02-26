@@ -1,7 +1,7 @@
 package com.chape.showg.Fragment;
 
 import android.content.Intent;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,24 +10,20 @@ import android.support.v7.widget.GridLayoutManager;
 
 import android.support.v7.widget.RecyclerView;
 
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chape.showg.activity.ImageBrowseActivity;
 import com.chape.showg.adapter.PicturebaseAdapter;
 import com.chape.showg.util.MyApplication;
 import com.chape.showg.R;
-import com.chape.showg.activity.WebviewActivity;
-import com.chape.showg.listener.EndLessOnScrollListener;
-import com.chape.showg.adapter.PictureAdapter;
+
 import com.chape.showg.base.Picture;
-import com.chape.showg.util.HttpUtil;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,15 +33,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -53,21 +47,21 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class PictureFragment extends Fragment {
-   private List<Picture> picList;
+    private List<Picture> picList;
     private RecyclerView recyclerView;
     private PicturebaseAdapter adapter;
     private View view;
-   private SwipeRefreshLayout swipeRefreshLayout;
-  private GridLayoutManager gridLayoutManager;
-  private int page=2;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private GridLayoutManager gridLayoutManager;
+    private int page = 2;
+    private Disposable mDisposable;
 
     @Nullable
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-         view=inflater.inflate(R.layout.picture,container,false);
+        view = inflater.inflate(R.layout.picture, container, false);
 
         initRecyclerView();
         initData();
@@ -81,55 +75,58 @@ public class PictureFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDisposable.dispose();
+    }
+
+    private void initData() {
+        picList = new ArrayList<>();
+        getData("");
+
+    }
+
+    private void initAdapter() {
+        adapter = new PicturebaseAdapter(R.layout.pic, picList);
+        // adapter.openLoadAnimation();
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                // Toast.makeText(MyApplication.getContext(),picList.get(position).getContent_url(),Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(MyApplication.getContext(), ImageBrowseActivity.class);
+                intent.putExtra("picurl", picList.get(position).getContent_url());
+                startActivity(intent);
+
+            }
+        });
+        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                if (page > 36) {
+                    adapter.loadMoreEnd();
+                } else if (page > 1 && page < 36) {
+                    getData("" + page);
+                    page++;
+                    adapter.notifyDataSetChanged();
+                    // adapter.addData(picList);
+                    adapter.loadMoreComplete();
+                } else {
+                    adapter.loadMoreFail();
+                }
+            }
+        });
+        recyclerView.setAdapter(adapter);
 
     }
 
 
-private void initData(){
-    picList=new ArrayList<>();
-    getData("");
+    private void initRecyclerView() {
 
-}
-private void initAdapter(){
-    adapter=new PicturebaseAdapter(R.layout.pic,picList);
-   // adapter.openLoadAnimation();
-    adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-        @Override
-        public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-           // Toast.makeText(MyApplication.getContext(),picList.get(position).getContent_url(),Toast.LENGTH_LONG).show();
-           Intent intent=new Intent(MyApplication.getContext(),ImageBrowseActivity.class);
-            intent.putExtra("picurl",picList.get(position).getContent_url());
-            startActivity(intent);
-
-        }
-    });
-    adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-        @Override
-        public void onLoadMoreRequested() {
-            if(page>36){
-                adapter.loadMoreEnd();
-            }else if(page>1&&page<36){
-                getData(""+page);
-                page++;
-                adapter.notifyDataSetChanged();
-               // adapter.addData(picList);
-           adapter.loadMoreComplete();
-            }else {
-               adapter.loadMoreFail();
-            }
-        }
-    });
-    recyclerView.setAdapter(adapter);
-
-}
-
-
-
-
-    private void initRecyclerView(){
-
-        gridLayoutManager=new GridLayoutManager(getContext(),2);
-        recyclerView=(RecyclerView) view.findViewById(R.id.pic_rv);
+        gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerView = (RecyclerView) view.findViewById(R.id.pic_rv);
         recyclerView.setLayoutManager(gridLayoutManager);
 
 
@@ -143,7 +140,7 @@ private void initAdapter(){
             }
         });*/
 
-    //    swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.refresh);
+        //    swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.refresh);
      /*   recyclerView.addOnScrollListener(new EndLessOnScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int currentPage) {
@@ -162,59 +159,60 @@ private void initAdapter(){
             }
         });*/
     }
-private void getData(final String page){
-    Observable.create(new ObservableOnSubscribe<Picture>() {
-        @Override
-        public void subscribe(ObservableEmitter<Picture> emitter) throws Exception {
-            try {
-                Document doc = Jsoup.connect("http://www.33mn.net/ns/"+page).get();
-                Elements titleLinks = doc.select("div.hm");    //解析来获取每条新闻的标题与链接地址
-                for (int j = 0; j < titleLinks.size(); j++) {
 
-                    String title = "http://www.33mn.net"+titleLinks.get(j).select("a").attr("href");
-                    String picurl = titleLinks.get(j).select("img").attr("name");
-                   //     Log.e("title", picUrl.url);
-                    Picture picUrl = new Picture(title,picurl);
+    private void getData(final String page) {
+        Observable.create(new ObservableOnSubscribe<Picture>() {
+            @Override
+            public void subscribe(ObservableEmitter<Picture> emitter) throws Exception {
+                try {
+                    Document doc = Jsoup.connect("http://www.33mn.net/ns/" + page).get();
+                    Elements titleLinks = doc.select("div.hm");    //解析来获取每条新闻的标题与链接地址
+                    for (int j = 0; j < titleLinks.size(); j++) {
 
-                    emitter.onNext(picUrl);
+                        String title = "http://www.33mn.net" + titleLinks.get(j).select("a").attr("href");
+                        String picurl = titleLinks.get(j).select("img").attr("name");
+                        //     Log.e("title", picUrl.url);
+                        Picture picUrl = new Picture(title, picurl);
 
+                        emitter.onNext(picUrl);
+
+                    }
+                    emitter.onComplete();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                emitter.onComplete();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-        }
-    }).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<Picture>() {
-                           @Override
-                           public void onSubscribe(Disposable d) {
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Picture>() {
+                               @Override
+                               public void onSubscribe(Disposable d) {
+                                   mDisposable = d;
+                               }
 
+                               @Override
+                               public void onNext(Picture picture) {
+                                   picList.add(picture);
+                               }
+
+                               @Override
+                               public void onError(Throwable e) {
+
+                               }
+
+                               @Override
+                               public void onComplete() {
+                                   adapter.loadMoreComplete();
+                                   // adapter.notifyDataSetChanged();
+                                   //  adapter=new PictureAdapter(picList,getContext());
+                                   // recyclerView.setAdapter(adapter);
+                                   //  adapter.notifyDataSetChanged();
+                                   // swipeRefreshLayout.setRefreshing(false);
+
+                               }
                            }
+                );
 
-                           @Override
-                           public void onNext(Picture picture) {
-                            picList.add(picture);
-                           }
-
-                           @Override
-                           public void onError(Throwable e) {
-
-                           }
-
-                           @Override
-                           public void onComplete() {
-                               adapter.loadMoreComplete();
-                           // adapter.notifyDataSetChanged();
-                             //  adapter=new PictureAdapter(picList,getContext());
-                              // recyclerView.setAdapter(adapter);
-                             //  adapter.notifyDataSetChanged();
-                              // swipeRefreshLayout.setRefreshing(false);
-
-                           }
-                       }
-            );
-
-}
+    }
 
 }
